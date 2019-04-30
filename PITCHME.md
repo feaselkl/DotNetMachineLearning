@@ -218,10 +218,10 @@ Data gathering will likely be an iterative process; as you flesh out your models
 
 ### Data Gathering Example
 
-In this example, we will use Pro Football Reference to get high-level measures like score, home or away game, top receiver, etc. But if you want to take this further, a few additional data sources could be:
+In this example, we will use Pro Football Reference to get high-level measures like score, location, top receiver, etc. If you want to take this further, a few additional data sources could be:
 
 * Las Vegas odds prior to the game.
-* Advanced analytics for Bills players as well as their opponents.
+* Advanced analytics for players on both sides.
 * Weather data.
 * Coaching and schema data.
 * Additional historical data on combinations of players to estimate team quality.
@@ -312,7 +312,7 @@ There are several techniques we can use to reshape data to make it easier to ana
 * Normalize values (transform numeric data to have a mean of 0 and standard deviation of 1)
 * Bin data, converting continuous variables to discrete
 
----?image=presentation/assets/background/	demo.jpg&size=cover&opacity=20
+---?image=presentation/assets/background/demo.jpg&size=cover&opacity=20
 
 ### Demo Time
 
@@ -372,7 +372,7 @@ Here we have two comparisons, depth vs table and x vs y. Depth and table are mil
 ![Box Plot](presentation/assets/image/Correlation.png)
 
 
----?image=presentation/assets/background/4_5_demo.jpg&size=cover&opacity=20
+---?image=presentation/assets/background/demo.jpg&size=cover&opacity=20
 
 ### Demo Time
 
@@ -557,7 +557,7 @@ If we fail to safeguard this data, we can end up overfitting our model to the te
 You can also build a fitness function to evaluate certain types. Genetic algorithms are a common tool for this.
 @divend
 
----?image=presentation/assets/background/4_5_demo.jpg&size=cover&opacity=20
+---?image=presentation/assets/background/demo.jpg&size=cover&opacity=20
 
 ### Demo Time
 
@@ -643,6 +643,10 @@ In a production scenario, you will start with a Minimum Viable Product (MVP) to 
 ### Wrapping Up
 
 Over the course of today's talk, we have covered the Microsoft Team Data Science Process as well as a pragmatic implementation of a data science workflow. Following a stable process allows you to maximize the chances of developing a high-quality and effective model.
+
+---
+
+### Wrapping Up
 
 Our implementation tool of choice was ML.NET, Microsoft's official library for machine learning in C# and F#.  I think there are much better tools in R and Python, but if your company forbids using those languages, you can get by with this library.
 
