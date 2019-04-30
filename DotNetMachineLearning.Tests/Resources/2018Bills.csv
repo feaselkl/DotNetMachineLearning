@@ -1,0 +1,17 @@
+Game,QB,HomeAway,NumPointsScored,TopReceiver,TopRunner,NumSacks,NumDefTurnovers,MinutesPossession,Outcome
+1,Nathan Peterman,Away,3,Zay Jones,Marcus Murphy,1,1,25,Loss
+2,Josh Allen,Home,20,Zay Jones,LeSean McCoy,2,1,27,Loss
+3,Josh Allen,Away,27,Chris Ivory,Chris Ivory,4,3,36,Win
+4,Josh Allen,Away,0,Charles Clay,LeSean McCoy,2,2,25,Loss
+5,Josh Allen,Home,13,LeSean McCoy,LeSean McCoy,2,3,34,Win
+6,Josh Allen,Away,13,Kelvin Benjamin,LeSean McCoy,7,4,33,Loss
+7,Derek Anderson,Away,5,Kelvin Benjamin,Chris Ivory,0,0,27,Loss
+8,Derek Anderson,Home,6,LeSean McCoy,Chris Ivory,2,0,28,Loss
+9,Nathan Peterman,Home,9,Kelvin Benjamin,Nathan Peterman,1,1,34,Loss
+10,Matt Barkley,Away,41,Robert Foster,LeSean McCoy,3,2,39,Win
+11,Josh Allen,Home,24,Robert Foster,Josh Allen,3,2,27,Win
+12,Josh Allen,Away,17,Zay Jones,Josh Allen,3,1,33,Loss
+13,Josh Allen,Away,23,Robert Foster,Josh Allen,0,1,34,Loss
+14,Josh Allen,Home,14,Robert Foster,Keith Ford,0,0,31,Win
+15,Josh Allen,Away,12,Zay Jones,Keith Ford,1,3,24,Loss
+16,Josh Allen,Home,42,Zay Jones,Josh Allen,4,4,30,Win

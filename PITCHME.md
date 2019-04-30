@@ -201,7 +201,7 @@ Data processing is made up of a few different activities:
 
 ### A Big Problem
 
-.NET languages are pretty bad about data processing, especially data analysis.  We will go through these examples but I would recommend trying out R or Python for this phase.  F# is an acceptable language for data processing but even it isn't fantastic.  You'd often have a better time of it pulling data into Excel and implementing in C#.
+.NET languages are pretty bad about data processing, especially data analysis.  We will go through these examples but I would recommend trying out R or Python for this phase.  F# is an acceptable language for data processing but even it isn't fantastic.  You'd often have a better time of it pulling data into SQL and Excel, and then implementing in .NET.
 
 ---?image=presentation/assets/background/collection.jpg&size=cover&opacity=20
 
@@ -238,23 +238,12 @@ Simply getting the data is a start, but there's a long journey ahead.
 
 ### Data Cleansing
 
-After grabbing relevant-looking data sets, you will want to join them together to gain insight from the mashup of different data sets. Common join activities include:
+Common data cleansing activites include (but certainly are not limited to):
 
-* Changing the grain of at least one data set
-* Definining join criteria (because there is no obvious natural join key)
-* Reshaping data to fit join criteria
-
----?image=presentation/assets/background/dataquality.jpg&size=cover&opacity=20
-
-### Data Cleansing
-
-You will quickly find problems with your data sets, including (but not limited to):
-
-* Mismatched, mislabeled, and incorrect data
-* Records with missing data
-* Duplicated records
-* Data inconsistencies:  records conflicting with other records
-* Misshapen flat files
+* Correcting mislabled data
+* Dealing with missing data
+* Dealing with data inconsistencies
+* Reshaping data
 
 ---?image=presentation/assets/background/mismatch.jpg&size=cover&opacity=20
 
@@ -279,12 +268,6 @@ People don't always fill out the entirety of every form. When we're missing impo
 
 None of these options is perfect, but the last three can help salvage incomplete records.
 
----?image=presentation/assets/background/duplicates.jpg&size=cover&opacity=20
-
-### Data Cleansing - Duplicates
-
-Generally, duplicates won't throw off an analysis unless it's an extreme percentage like one row being duplicated a thousand times in a data set of 1500 total rows.  In that case, you'll want to filter out duplicates.  But otherwise, it's not too important.
-
 ---
 
 ### Data Inconsistencies
@@ -292,14 +275,6 @@ Generally, duplicates won't throw off an analysis unless it's an extreme percent
 Independent systems may end up with inconsistent data due to reasons like typos, transcription errors, etc. Sometimes subtle differences in data sets can lead to differing results. Potential solutions include:
 * Make one data set canonical
 * Institute rules (pick the lower number, pick the later date, etc.)
-
----?image=presentation/assets/background/misshapen.jpg&size=cover&opacity=20
-
-### Misshapen Data
-
-Data stored in flat files or textual format can end up misshapen--some rows may not have enough delimiters (or maybe too many), there could be newlines in the middle of a record, or the file cuts off in the middle of a record.
-
-This is a problem with flat files and certain semi-structured data formats. It is not a problem with relational databases, where data shape is enforced.
 
 ---?image=presentation/assets/background/shapes.jpg&size=cover&opacity=20
 
@@ -311,10 +286,6 @@ There are several techniques we can use to reshape data to make it easier to ana
 * Turn strings into factors (categorical data)
 * Normalize values (transform numeric data to have a mean of 0 and standard deviation of 1)
 * Bin data, converting continuous variables to discrete
-
----?image=presentation/assets/background/demo.jpg&size=cover&opacity=20
-
-### Demo Time
 
 ---?image=presentation/assets/background/exploration.jpg&size=cover&opacity=20
 
@@ -371,11 +342,6 @@ Here we have two comparisons, depth vs table and x vs y. Depth and table are mil
 
 ![Box Plot](presentation/assets/image/Correlation.png)
 
-
----?image=presentation/assets/background/demo.jpg&size=cover&opacity=20
-
-### Demo Time
-
 ---
 
 @title[Modeling]
@@ -406,6 +372,35 @@ Modeling has five major steps:
 * Model Evaluation
 * Model Tuning
 
+---
+
+```csharp
+var mlContext = new MLContext();
+var reader = mlContext.Data.CreateTextLoader(
+    columns: new TextLoader.Column[]
+    {
+        // The four features of the Iris dataset will be grouped together as one Features column.
+        new TextLoader.Column("SepalLength",DataKind.R4,0),
+        new TextLoader.Column("SepalWidth",DataKind.R4,1),
+        new TextLoader.Column("PetalLength",DataKind.R4,2),
+        new TextLoader.Column("PetalWidth",DataKind.R4,3),
+        // Label: kind of iris.
+        new TextLoader.Column("Label",DataKind.TX,4)
+    },
+    // Default separator is tab, but the dataset has semicolon.
+    separatorChar: ',',
+    // First line of the file is a header, not a data row.
+    hasHeader: true
+);
+
+var data = reader.Read(dataPath);
+```
+
+@[1](Create a new Machine Learning context.)
+@[2-18](Define the shape of input data.)
+@[20](Load the data from dataPath.)
+
+
 ---?image=presentation/assets/background/engineering.jpg&size=cover&opacity=20
 
 ### Feature Engineering
@@ -417,6 +412,24 @@ Feature engineering involves creating relevant features from raw data. Examples 
 * Geocoding latitude and longitude from an address
 * Aggregating data (by day, by hour, etc.)
 * Text processing -- turning words into arbitrary numbers for numeric analysis (TF-IDF, Word2Vec)
+
+---
+
+```csharp
+var dynamicPipeline =
+    // Concatenate all the features together into one column 'Features'.
+    mlContext.Transforms.Concatenate("Features", "SepalLength", "SepalWidth", "PetalLength", "PetalWidth")
+	// Drop unnecessary features
+	.Append(mlContext.Transforms.DropColumns(new[] { "UnusedValue", "OtherUnusedValue" }))
+    // Note that the label is text, so it needs to be converted to key.
+    .Append(mlContext.Transforms.Conversion.MapValueToKey("Label"), TransformerScope.TrainTest)
+    // Use the multi-class SDCA model to predict the label using features.
+    .Append(mlContext.MulticlassClassification.Trainers.StochasticDualCoordinateAscent());
+```
+
+@[1](Create a new pipeline.)
+@[2-3](Engineer a new feature called Features as a vector of floats.)
+@[6-7](Reshape the label to turn it into a key for multiclass training.)
 
 ---?image=presentation/assets/background/selection.jpg&size=cover&opacity=20
 
@@ -435,6 +448,22 @@ We use feature selection to winnow down the available set of features.  There ar
 
 ![My favorite example of spurious correlation](presentation/assets/image/SpuriousCorrelation.png)
 (<a href="http://www.tylervigen.com/spurious-correlations">Source</a>)
+
+---
+
+```csharp
+var dynamicPipeline =
+    // Concatenate all the features together into one column 'Features'.
+    mlContext.Transforms.Concatenate("Features", "SepalLength", "SepalWidth", "PetalLength", "PetalWidth")
+	// Drop unnecessary features
+	.Append(mlContext.Transforms.DropColumns(new[] { "UnusedValue", "OtherUnusedValue" }))
+    // Note that the label is text, so it needs to be converted to key.
+    .Append(mlContext.Transforms.Conversion.MapValueToKey("Label"), TransformerScope.TrainTest)
+    // Use the multi-class SDCA model to predict the label using features.
+    .Append(mlContext.MulticlassClassification.Trainers.StochasticDualCoordinateAscent());
+```
+
+@[4-5](Perform feature selection and drop unused features.)
 
 ---?image=presentation/assets/background/train.jpg&size=cover&opacity=20
 
@@ -515,6 +544,22 @@ Once you understand the nature of the problem, you can choose among viable algor
 Once you have an algorithm, features, and labels (if supervised), you can train the algorithm. Training a model is solving a system of equations, minimizing a loss function.
 @divend
 
+---
+
+```csharp
+var dynamicPipeline =
+    // Concatenate all the features together into one column 'Features'.
+    mlContext.Transforms.Concatenate("Features", "SepalLength", "SepalWidth", "PetalLength", "PetalWidth")
+	// Drop unnecessary features
+	.Append(mlContext.Transforms.DropColumns(new[] { "UnusedValue", "OtherUnusedValue" }))
+    // Note that the label is text, so it needs to be converted to key.
+    .Append(mlContext.Transforms.Conversion.MapValueToKey("Label"), TransformerScope.TrainTest)
+    // Use the multi-class SDCA model to predict the label using features.
+    .Append(mlContext.MulticlassClassification.Trainers.StochasticDualCoordinateAscent());
+```
+
+@[8-9](Select a multi-class classifier algorithm for training.)
+
 ---?image=presentation/assets/background/fitting.jpg&size=cover&opacity=20
 
 ### Validate The Model
@@ -523,11 +568,44 @@ Instead of using up all of our data for training, we typically want to perform s
 
 Overfitting happens when a model latches on to the particulars of a data set, leaving it unable to generalize to new data. To test for overfitting, test your model against unseen data. If there is a big dropoff in model accuracy between training and testing data, you are likely overfitting.
 
+---
+
+```csharp
+// Split the data 90:10 into train and test sets, train and evaluate.
+var (trainData, testData) = mlContext.MulticlassClassification.TrainTestSplit(data, testFraction: 0.1);
+
+// Train the model.
+var model = dynamicPipeline.Fit(trainData);
+
+// Compute quality metrics on the test set.
+var metrics = mlContext.MulticlassClassification.Evaluate(model.Transform(testData));
+Console.WriteLine(metrics.AccuracyMicro);
+```
+
+@[1-2](Define a data split for training.  Here it's 90-10.)
+@[4-5](Actually perform the model training.)
+@[7-9](Evaluate measures and write out the accuracy to the console.)
+
 ---?image=presentation/assets/background/suitmeasure.jpg&size=cover&opacity=20
 
 ### Cross-Validation
 
 Cross-validation is a technique where we slice and dice the training data, training our model with different subsets of the total data. The purpose here is to find a model which is fairly robust to the particulars of a subset of training data, thereby reducing the risk of overfitting.
+
+---
+
+```csharp
+// Now run the 5-fold cross-validation experiment, using the same pipeline.
+var cvResults = mlContext.MulticlassClassification.CrossValidate(data, dynamicPipeline, numFolds: 5);
+
+// The results object is an array of 5 elements. For each of the 5 folds, we have metrics, model and scored test data.
+// Let's compute the average micro-accuracy.
+var microAccuracies = cvResults.Select(r => r.metrics.AccuracyMicro);
+Console.WriteLine(microAccuracies.Average());
+```
+
+@[1-2](Perform five-fold cross validation with our data set.)
+@[4-7](Write out the mean accuracy of all five folds.)
 
 ---?image=presentation/assets/background/tuning.jpg&size=cover&opacity=20
 
@@ -584,6 +662,10 @@ You can also build a fitness function to evaluate certain types. Genetic algorit
 ### Deployment
 
 With ML.NET, deployment is fairly straightforward.  For fast models, you can include them in a web application directly.  For slower models, you might store the trained model in a file and load it into memory at service runtime, then generate predictions against it in real time.
+
+---?image=presentation/assets/background/demo.jpg&size=cover&opacity=20
+
+### Demo Time
 
 ---?image=presentation/assets/background/microscope.jpg&size=cover&opacity=20
 

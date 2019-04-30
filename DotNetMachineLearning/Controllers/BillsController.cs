@@ -17,11 +17,6 @@ namespace DotNetMachineLearning.Controllers
 			return View();
 		}
 
-		public IActionResult Index2()
-		{
-			return View();
-		}
-
 		[HttpPost, ValidateAntiForgeryToken]
 		public IActionResult Index(BillsViewModel bvm)
 		{
@@ -47,11 +42,6 @@ namespace DotNetMachineLearning.Controllers
 			});
 
 			return Content($"Under these conditions, the most likely outcome is a {outcome.Outcome.ToLower()}.");
-		}
-
-		public IActionResult WinEstimator()
-		{
-			return View();
 		}
 	}
 }

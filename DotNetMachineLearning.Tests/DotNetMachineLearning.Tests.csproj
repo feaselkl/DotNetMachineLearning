@@ -16,4 +16,10 @@
     <ProjectReference Include="..\DotNetMachineLearning.NaiveBayes\DotNetMachineLearning.BillsModelTrainer.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Resources\2018Bills.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

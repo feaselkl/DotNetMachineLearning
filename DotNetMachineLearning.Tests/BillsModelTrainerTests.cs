@@ -8,16 +8,20 @@ namespace Tests
 {
 	public class Tests
 	{
+		MLContext mlContext;
+		BillsModelTrainer bmt;
+		ITransformer model;
 		PredictionEngineBase<RawInput, Prediction> predictor;
+		
 
 		[SetUp]
 		public void Setup()
 		{
-			MLContext mlContext = new MLContext(seed: 9997);
-			BillsModelTrainer bmt = new BillsModelTrainer();
+			mlContext = new MLContext(seed: 9997);
+			bmt = new BillsModelTrainer();
 
-			var data = bmt.GetRawData(mlContext, "C:\\Temp\\2018Bills.csv");
-			var model = bmt.TrainModel(mlContext, data);
+			var data = bmt.GetRawData(mlContext, "Resources\\2018Bills.csv");
+			model = bmt.TrainModel(mlContext, data);
 
 			predictor = model.CreatePredictionEngine<RawInput, Prediction>(mlContext);
 		}
@@ -45,6 +49,44 @@ namespace Tests
 			});
 
 			Assert.AreEqual(expectedOutcome, outcome.Outcome);
+		}
+
+		private string GenerateOutcome(PredictionEngineBase<RawInput, Prediction> pe)
+		{
+			return pe.Predict(new RawInput
+			{
+				Game = 0,
+				Quarterback = "Josh Allen",
+				Location = "Home",
+				NumberOfPointsScored = 17,
+				TopReceiver = "Robert Foster",
+				TopRunner = "Josh Allen",
+				NumberOfSacks = 0,
+				NumberOfDefensiveTurnovers = 0,
+				MinutesPossession = 0,
+				Outcome = "WHO KNOWS?"
+			}).Outcome;
+		}
+
+		[Test()]
+		public void SaveAndLoadModel()
+		{
+			string modelPath = "C:\\Temp\\BillsModel.mdl";
+			bmt.SaveModel(mlContext, model, modelPath);
+
+			// Register the assembly that contains 'QBCustomMappings' with the ComponentCatalog
+			// so it can be found when loading the model.
+			mlContext.ComponentCatalog.RegisterAssembly(typeof(QBCustomMappings).Assembly);
+			mlContext.ComponentCatalog.RegisterAssembly(typeof(PointsCustomMappings).Assembly);
+
+			var newModel = bmt.LoadModel(mlContext, modelPath);
+
+			var newPredictor = newModel.CreatePredictionEngine<RawInput, Prediction>(mlContext);
+			var po = GenerateOutcome(predictor);
+			var npo = GenerateOutcome(newPredictor);
+
+			Assert.IsNotNull(newModel);
+			Assert.AreEqual(po, npo);
 		}
 	}
 }
