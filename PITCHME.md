@@ -392,13 +392,12 @@ var reader = mlContext.Data.CreateTextLoader(
     // First line of the file is a header, not a data row.
     hasHeader: true
 );
-
 var data = reader.Read(dataPath);
 ```
 
 @[1](Create a new Machine Learning context.)
-@[2-18](Define the shape of input data.)
-@[20](Load the data from dataPath.)
+@[2-17](Define the shape of input data.)
+@[18](Load the data from dataPath.)
 
 
 ---?image=presentation/assets/background/engineering.jpg&size=cover&opacity=20
@@ -418,18 +417,22 @@ Feature engineering involves creating relevant features from raw data. Examples 
 ```csharp
 var dynamicPipeline =
     // Concatenate all the features together into one column 'Features'.
-    mlContext.Transforms.Concatenate("Features", "SepalLength", "SepalWidth", "PetalLength", "PetalWidth")
+    mlContext.Transforms.Concatenate("Features", "SepalLength",
+		"SepalWidth", "PetalLength", "PetalWidth")
 	// Drop unnecessary features
-	.Append(mlContext.Transforms.DropColumns(new[] { "UnusedValue", "OtherUnusedValue" }))
+	.Append(mlContext.Transforms.DropColumns(new[]
+		{ "UnusedValue", "OtherUnusedValue" }))
     // Note that the label is text, so it needs to be converted to key.
-    .Append(mlContext.Transforms.Conversion.MapValueToKey("Label"), TransformerScope.TrainTest)
+    .Append(mlContext.Transforms.Conversion.MapValueToKey("Label"),
+		TransformerScope.TrainTest)
     // Use the multi-class SDCA model to predict the label using features.
-    .Append(mlContext.MulticlassClassification.Trainers.StochasticDualCoordinateAscent());
+    .Append(mlContext.MulticlassClassification.Trainers.
+		StochasticDualCoordinateAscent());
 ```
 
 @[1](Create a new pipeline.)
-@[2-3](Engineer a new feature called Features as a vector of floats.)
-@[6-7](Reshape the label to turn it into a key for multiclass training.)
+@[2-4](Engineer a new feature called Features as a vector of floats.)
+@[8-10](Reshape the label to turn it into a key for multiclass training.)
 
 ---?image=presentation/assets/background/selection.jpg&size=cover&opacity=20
 
@@ -454,16 +457,20 @@ We use feature selection to winnow down the available set of features.  There ar
 ```csharp
 var dynamicPipeline =
     // Concatenate all the features together into one column 'Features'.
-    mlContext.Transforms.Concatenate("Features", "SepalLength", "SepalWidth", "PetalLength", "PetalWidth")
+    mlContext.Transforms.Concatenate("Features", "SepalLength",
+		"SepalWidth", "PetalLength", "PetalWidth")
 	// Drop unnecessary features
-	.Append(mlContext.Transforms.DropColumns(new[] { "UnusedValue", "OtherUnusedValue" }))
+	.Append(mlContext.Transforms.DropColumns(new[]
+		{ "UnusedValue", "OtherUnusedValue" }))
     // Note that the label is text, so it needs to be converted to key.
-    .Append(mlContext.Transforms.Conversion.MapValueToKey("Label"), TransformerScope.TrainTest)
+    .Append(mlContext.Transforms.Conversion.MapValueToKey("Label"),
+		TransformerScope.TrainTest)
     // Use the multi-class SDCA model to predict the label using features.
-    .Append(mlContext.MulticlassClassification.Trainers.StochasticDualCoordinateAscent());
+    .Append(mlContext.MulticlassClassification.Trainers.
+		StochasticDualCoordinateAscent());
 ```
 
-@[4-5](Perform feature selection and drop unused features.)
+@[5-7](Perform feature selection and drop unused features.)
 
 ---?image=presentation/assets/background/train.jpg&size=cover&opacity=20
 
@@ -549,16 +556,20 @@ Once you have an algorithm, features, and labels (if supervised), you can train 
 ```csharp
 var dynamicPipeline =
     // Concatenate all the features together into one column 'Features'.
-    mlContext.Transforms.Concatenate("Features", "SepalLength", "SepalWidth", "PetalLength", "PetalWidth")
+    mlContext.Transforms.Concatenate("Features", "SepalLength",
+		"SepalWidth", "PetalLength", "PetalWidth")
 	// Drop unnecessary features
-	.Append(mlContext.Transforms.DropColumns(new[] { "UnusedValue", "OtherUnusedValue" }))
+	.Append(mlContext.Transforms.DropColumns(new[]
+		{ "UnusedValue", "OtherUnusedValue" }))
     // Note that the label is text, so it needs to be converted to key.
-    .Append(mlContext.Transforms.Conversion.MapValueToKey("Label"), TransformerScope.TrainTest)
+    .Append(mlContext.Transforms.Conversion.MapValueToKey("Label"),
+		TransformerScope.TrainTest)
     // Use the multi-class SDCA model to predict the label using features.
-    .Append(mlContext.MulticlassClassification.Trainers.StochasticDualCoordinateAscent());
+    .Append(mlContext.MulticlassClassification.Trainers.
+		StochasticDualCoordinateAscent());
 ```
 
-@[8-9](Select a multi-class classifier algorithm for training.)
+@[11-13](Select a multi-class classifier algorithm for training.)
 
 ---?image=presentation/assets/background/fitting.jpg&size=cover&opacity=20
 
@@ -572,19 +583,19 @@ Overfitting happens when a model latches on to the particulars of a data set, le
 
 ```csharp
 // Split the data 90:10 into train and test sets, train and evaluate.
-var (trainData, testData) = mlContext.MulticlassClassification.TrainTestSplit(data, testFraction: 0.1);
-
+var (trainData, testData) = mlContext.MulticlassClassification.
+	TrainTestSplit(data, testFraction: 0.1);
 // Train the model.
 var model = dynamicPipeline.Fit(trainData);
-
 // Compute quality metrics on the test set.
-var metrics = mlContext.MulticlassClassification.Evaluate(model.Transform(testData));
+var metrics = mlContext.MulticlassClassification.
+	Evaluate(model.Transform(testData));
 Console.WriteLine(metrics.AccuracyMicro);
 ```
 
-@[1-2](Define a data split for training.  Here it's 90-10.)
+@[1-3](Define a data split for training.  Here it's 90-10.)
 @[4-5](Actually perform the model training.)
-@[7-9](Evaluate measures and write out the accuracy to the console.)
+@[6-9](Evaluate measures and write out the accuracy to the console.)
 
 ---?image=presentation/assets/background/suitmeasure.jpg&size=cover&opacity=20
 
@@ -596,16 +607,17 @@ Cross-validation is a technique where we slice and dice the training data, train
 
 ```csharp
 // Now run the 5-fold cross-validation experiment, using the same pipeline.
-var cvResults = mlContext.MulticlassClassification.CrossValidate(data, dynamicPipeline, numFolds: 5);
-
-// The results object is an array of 5 elements. For each of the 5 folds, we have metrics, model and scored test data.
+var cvResults = mlContext.MulticlassClassification.
+	CrossValidate(data, dynamicPipeline, numFolds: 5);
+// The results object is an array of 5 elements.
+// For each of the 5 folds, we have metrics, model and scored test data.
 // Let's compute the average micro-accuracy.
 var microAccuracies = cvResults.Select(r => r.metrics.AccuracyMicro);
 Console.WriteLine(microAccuracies.Average());
 ```
 
-@[1-2](Perform five-fold cross validation with our data set.)
-@[4-7](Write out the mean accuracy of all five folds.)
+@[1-3](Perform five-fold cross validation with our data set.)
+@[4-8](Write out the mean accuracy of all five folds.)
 
 ---?image=presentation/assets/background/tuning.jpg&size=cover&opacity=20
 
