@@ -1,0 +1,852 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Catallaxy Services | Cleaning Is Half The Battle:  Launching A Data Science Project</title>
+
+		<meta name="description" content="Reviewing the Data Science process.">
+		<meta name="author" content="Kevin Feasel">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="../reveal-js/css/reveal.min.css">
+		<link rel="stylesheet" href="../reveal-js/css/theme/sky.css" id="theme">
+		<link rel="stylesheet" href="mods.css">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="../reveal-js/lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', use the PDF print sheet -->
+		<script>
+			document.write( '<link rel="stylesheet" href="../reveal-js/css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+		<div class="reveal">
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+
+				<section>
+					<h2>Cleaning Is Half The Battle:  Launching A Data Science Project</h2>
+					<p>
+						<a href="http://www.catallaxyservices.com">Kevin Feasel</a> (<a href="https://twitter.com/feaselkl">@feaselkl</a>)
+					</p>
+					<p><a href="http://csmore.info/on/datascience">http://CSmore.info/on/datascience</a></p>
+					
+					<script>
+						//Originally found at http://concurrencykit.org/presentations/lockfree_introduction/
+						if( navigator.userAgent.match( /(iPhone|iPad|iPod|Android)/i ) )
+						document.write( '<p style="color: rgba(0,0,0,0.3); text-shadow: none;">('+'Tap or swipe to navigate'+')</p>' );
+					</script>
+				</section>
+				
+				<section>
+					<h2>Who Am I?  What Am I Doing Here?</h2>
+					<table class="whoami">
+						<tr>
+							<td><a href="https://csmore.info"><img src="../Logo.png" height="133" width="119" /></a></td>
+							<td><a href="https://csmore.info">Catallaxy Services</a></td>
+							<td rowspan="3"><a href="http://www.twitter.com/feaselkl"><img src="../HeadShot.jpg" height="358" width="315" /></a><br /><a href="http://www.twitter.com/feaselkl">@feaselkl</a></td>
+						</tr>
+						<tr>
+							<td><a href="https://curatedsql.com"><img src="../CuratedSQLLogo.png" height="133" width="119" /></a></td>
+							<td><a href="https://curatedsql.com">Curated SQL</a></td>
+						</tr>
+						<tr>
+							<td><a href="https://wespeaklinux.com"><img src="../WeSpeakLinux.jpg" height="133" width="119" /></a></td>
+							<td><a href="https://wespeaklinux.com">We Speak Linux</a></td>
+						</tr>
+					</table>
+				</section>
+				
+				<section>
+					<section>
+						<h2>Data Adages</h2>
+						<p>
+							<ul>
+								<li>"Clean" data is an aspiration, not a reality</li>
+								<li>If data is stored in two places, there will inevitably be disagreements</li>
+								<li>You will always have more questions than data</li>
+								<li>Decision-makers will not know their questions until you have enough information to give them; their questions almost invariably cannot be answered by your system</li>
+								<li>Data necessarily abstracts the particulars of time and place and therefore explains a fragment of the underlying reality</li>
+							</ul>
+						</p>
+						<p>Nevertheless, our job is to figure something out.</p>
+					</section>
+					<section>
+						<h2>Process</h2>
+						<p>
+							To deal with these considerations, we build and implement processes.  These processes give us structure and help us navigate some of the difficulties in managing data.
+						</p>
+						<p>
+							In today's talk, we will look at one particular process:  the Microsoft Team Data Science Process.
+						</p>
+					</section>
+					<section>
+						<h2>Process</h2>
+						<p>
+							<img src="tdsp-lifecycle2.png" height="450" width="604" />
+						</p>
+						<p>
+							<a href="https://docs.microsoft.com/en-us/azure/machine-learning/team-data-science-process/overview" target="blank">(Source)</a>
+						</p>
+					</section>
+					<section>
+						<h2>Motivation</h2>
+						<p>
+							We will use the Team Data Science Process to uncover interesting information from the <a href="https://www.brentozar.com/archive/2018/01/2018-data-professionals-salary-survey-results/">2018 Data Professionals Salary Survey</a>.
+						</p>
+						<p>
+							At each step of the way, we will walk through implementation details and achieve a better understanding of data professional salaries.
+						</p>
+					</section>
+				</section>				
+				<section>
+					<section>
+						<h2>Agenda</h2>
+						<ol>
+							<li class="active">Business Understanding</li>
+							<li>Data Processing</li>
+							<li>Modeling</li>
+							<li>Deployment</li>
+							<li>What's Next?</li>
+						</ol>
+					</section>
+					<section>
+						<h2>Business Understanding</h2>
+						<p>
+							Somebody higher up (typically on the business side of the house) wants a data science project done.  Your mission is to figure out as much about that person's vision as possible.
+						</p>
+						<p>
+							The first clue is in understanding the domain. What does the company do? Which industry are we in? What is the common parlance? Which technical terms do people use and what do they mean?
+						</p>
+						<p>
+							Even if you have a deep knowledge of the domain, you should still find the champion(s) of your project and understand best their vision of success.
+						</p>
+					</section>
+					<section>
+						<h2>Business Understanding</h2>
+						<p>
+							When interviewing your project champion or people on the business side, listen for the following types of questions:
+							<ul>
+								<li>How much / how many?</li>
+								<li>Which category does this belong to?</li>
+								<li>How can we segment this data?</li>
+								<li>Is this weird?</p>
+								<li>Which option should I choose?</li>
+							</ul>
+						</p>
+						<p>
+							Each of these is a different type of problem with its own set of statistical techniques and rules. Figuring out which of these is on your champion's mind is critical to delivering the right product.
+						</p>
+					</section>
+					<section>
+						<h2>Business Understanding</h2>
+						<p>
+							Your goal is to nail down a <strong>specific</strong> problem with a <strong>specific</strong> answer, narrowing the scope to something achievable.
+							<ul>
+								<li>Find a model which predicts quarterly sales to within 5% no later than 30 days into that quarter.</li>
+								<li>Given a title and description for a product, tell me with at least 90% probability a listing category that Amazon will consider valid for this product.</li>
+								<li>Determine which factors most affect the number of years the first owner holds onto our mid-range sedan.</li>
+							</ul>
+						</p>
+						<p>With a specific problem to solve, you can start looking for relevant data. Note that you might need to modify the scope of this problem over time but this at least gives you a starting point for what success looks like.</p>
+					</section>
+					<section>
+						<h2>Business Understanding</h2>
+						<p>
+							Once you have an interesting question, start looking for data. Some of this data will be in-house and could be in databases, Excel, flat files, accessible through APIs, or even in reports. 
+						</p>
+						<p>
+							Your champion will hopefully be able to point you in the right direction, but this part of the process requires legwork.
+						</p>
+					</section>
+					<section>
+						<h2>Business Understanding</h2>
+						<p>
+							Once you have a compendium of data sources, you will want to build a <strong>data dictionary</strong>, which helps you explain what different pieces of data actually mean.  A data dictionary typically tells you:
+							<ul>
+								<li>Data type:  numeric, string, categorical, binary</li>
+								<li>Data format:  CSV, SQL Server table, Hive table, etc.</li>
+								<li>Size of data and number of records</li>
+								<li>Enumeration of valid values (if categorical)</li>
+								<li>Other domain rules (if known)</li>
+							</ul>
+						</p>
+					</section>
+					<section>
+						<h2>Business Understanding</h2>
+						<p>
+							Another thing to determine is, where does your end data need to be? Will there be a different engineering team expecting to call a microservice API?  Will you get a set of files each day and dump results into a warehouse?
+						</p>
+						<p>
+							This is generally a technical problem that an Engineering group will architect, although your champion might have insight here depending upon how the business side will need to use your results.
+						</p>
+					</section>
+					<section>
+						<h2>Business Understanding</h2>
+						<h3>Example</h3>
+						<p>
+							We work for Data Platform Specialists, a company dedicated to providing DBAs and other data platform professionals with valuable market knowledge. We have come into possession of a survey of data professionals and want to build insights that we can share with our client base.
+						</p>
+					</section>
+					<section>
+						<h2>Business Understanding</h2>
+						<h3>Example</h3>
+						<p>
+							<img src="Survey.png" />
+						</p>
+					</section>
+					<section>
+						<h2>Business Understanding</h2>
+						<h3>Example</h3>
+						<p>
+							Questions we can ask given our domain knowledge:
+							<ul>
+								<li><strong>How much</strong> money does a DBA make?</li>
+								<li><strong>Which category</strong> of DBA (junior, mid-level, senior) does this particular work?</li>
+								<li><strong>How can we segment</strong> the DBAs in our survey?</li>
+								<li>Is this many hours per week <strong>weird</strong>?</p>
+								<li><strong>Which option should I choose</strong> as a career path? DBA? Data science? BI?</li>
+							</ul>
+						</p>
+					</section>
+					<section>
+						<h2>Business Understanding</h2>
+						<h3>Example</h3>
+						<p>
+							Narrowing this down with our champion and other stakeholders, we can get to the following question which we will endeavour to answer:
+						</p>
+						<p>
+							<strong>How much money should we expect a data professional will make?</strong>
+						</p>
+					</section>
+					<section>
+						<h2>Business Understanding</h2>
+						<h3>Example</h3>
+						<p>
+							As we review the survey data, we can start to see different shapes of data and begin to build a data dictionary.
+						</p>
+						<p>
+							For example, TelecommuteDaysPerWeek has six options:  less than 1, 1, 2, 3, 4, 5 or more. These are ordered options, meaning the numbers inherently matter.
+						</p>
+						<p>
+							By contrast, number of hours worked per week is an integer ranging from 5 to 200 (?!).
+						</p>
+					</section>
+					<section>
+						<h2>Business Understanding</h2>
+						<h3>Example</h3>
+						<p>
+							Our company wants to build a small website and allow people who have built profiles to get an estimate of how much they could be making in different roles.  Our job is to build a microservice API which returns a dollar amount based on inputs.
+						</p>
+					</section>
+				</section>
+				
+				<section>
+					<section>
+						<h2>Agenda</h2>
+						<ol>
+							<li>Business Understanding</li>
+							<li class="active">Data Processing</li>
+							<li>Modeling</li>
+							<li>Deployment</li>
+							<li>What's Next?</li>
+						</ol>
+					</section>
+					<section>
+						<h2>Data Processing</h2>
+						<p>
+							Data processing is made up of a few different activities:
+							<ul>
+								<li>Data Gathering</li>
+								<li>Data Cleansing</li>
+								<li>Data Analysis</li>
+							</ul>
+						</p>
+					</section>
+					<section>
+						<h2>Data Processing</h2>
+						<h3>Data Gathering</h3>
+						<p>Data gathering will likely be an iterative process. At first, you won't know exactly what data you need. But as you flesh out your models and gain a better understanding of the problem, you will go back to the well several times and probably will end up getting data from other sources. These sources can include:
+							<ul>
+								<li>Internal proprietary data</li>
+								<li>Open data sources (often governmental or academic)</li>
+								<li>Paid APIs or data sources from third parties</li>
+								<li>Survey data</li>
+							</ul>
+						</p>
+					</section>
+					<section>
+						<h2>Data Processing</h2>
+						<h3>Data Gathering Example</h3>
+						<p>
+							In this example, we will stick to just the data professional survey. But if you want to take this further, a few additional data sources could be:
+							<ul>
+								<li>PPP GDP per capita to normalize salaries across countries.</li>
+								<li>A geocoding data set to visualize results on a map.</li>
+								<li>Cost of living by ZIP code to normalize salaries within the US.</li>
+								<li>Census information to build out data by ZIP code.</li>
+								<li>Data from other surveys to add more to the sample.</li>
+							</ul>
+						</p>
+					</section>
+				</section>
+				
+				<section>
+					<section>
+						<h2>Data Processing</h2>
+						<h3>Data Cleansing</h3>
+						<p>Data cleansing is half the battle.  That's the title, after all!</p>
+						<p><img src="Knowing.jpg" height="514" width="493" /></p>
+					</section>
+					<section>
+						<h2>Data Processing</h2>
+						<h3>Data Cleansing</h3>
+						<p>Well...actually...
+						</p>
+						<p><img src="Sully.jpg" /></p>
+					</section>
+					<section>
+						<h2>Data Processing</h2>
+						<h3>Data Cleansing</h3>
+						<p>
+							Most of your time, you'll be a data plumber.
+						</p>
+						<p>
+							<img src="SuperMario.jpg" />
+						</p>
+					</section>
+					<section>
+						<h2>Data Processing</h2>
+						<h3>Data Cleansing</h3>
+						<p>
+							General estimates that you will hear from data scientists is that they spend approximately 80% of their time cleaning data. If anything, this is an underestimation--based on my experiences, that number might be closer to 90%.
+						</p>
+						<p>
+							Simply getting the data is a start, but there's a long journey ahead.
+						</p>
+					</section>
+					<section>
+						<h2>Data Processing</h2>
+						<h3>Data Cleansing</h3>
+						<p>
+							After grabbing relevant-looking data sets, you will want to join them together to gain insight from the mashup of different data sets. Common join activities include:
+							<ul>
+								<li>Changing the grain of at least one data set</li>
+								<li>Definining join criteria (because there is no obvious natural join key)</li>
+								<li>Reshaping data to fit join criteria</li>
+							</ul>
+						</p>
+					</section>
+					<section>
+						<h2>Data Processing</h2>
+						<h3>Data Cleansing</h3>
+						<p>
+							You will quickly find problems with your data sets, including (but not limited to):
+							<ul>
+								<li>Mismatched, mislabeled, and incorrect data</li>
+								<li>Records with missing data</li>
+								<li>Duplicated records</li>
+								<li>Data inconsistencies:  records conflicting with other records</li>
+								<li>Misshapen flat files</li>
+							</ul>
+						</p>
+					</section>
+					<section>
+						<h2>Data Processing</h2>
+						<h3>Data Cleansing -- Mismatches</h3>
+						<p>
+							<strong>Mislabeled</strong> data:  when the label is incorrect.  Ex: on the data professional survey, a person who earns $50K per year accidentally typing $500K per year. If you can fix the label, this data becomes useful. If you cannot, it may throw off your analysis.
+						</p>
+						<p>
+							<strong>Mismatched</strong> data:  data joined together which should not have been.
+						</p>
+						<p>
+							<strong>Incorrect</strong> data: when data other than the label is incorrect. Ex: a person works 200 hours per week?
+						</p>
+					</section>
+					<section>
+						<h2>Data Processing</h2>
+						<h3>Data Cleansing -- Missing Data</h3>
+						<p>
+							People don't always fill out the entirety of every form. Sometimes, they don't even give us important information. When we're missing data, we have a few options available to us:
+							<ul>
+								<li>Delete the row (okay with a small percent)</li>
+								<li>Substitute with a dummy value</li>
+								<li>Substitute with the mean, median, or mode</li>
+								<li>Use regression and replace with the regressed value</li>
+							</ul>
+						</p>
+						<p>None of these options is perfect, but the last three can help salvage incomplete records.</p>
+					</section>
+					<section>
+						<h2>Data Processing</h2>
+						<h3>Data Cleansing -- Duplicate Data</h3>
+						<p>
+							If your data source does not have duplicate protection in place, you might end up with multiple entries representing the same thing. Sometimes it's easy to catch those:  you might be able to use a DISTINCT clause to remove duplicates. Other times, you will have to dig further.
+						</p>
+					</section>
+					<section>
+						<h2>Data Processing</h2>
+						<h3>Data Cleansing -- Inconsistent Data</h3>
+						<p>
+							Independent systems may end up with inconsistent data. Sometimes people forget to fill out both systems the same.  Sometimes there are typos in data. Sometimes there are subtle differences in data sets which lead to differing results.
+						</p>
+						<p>
+							Regardless of the reason, we need to be able to handle those differences. One way to handle differences is to make one data set canonical and trust it over the other set. Another way to handle differences is to institute a rule--for example, maybe the lower number between data sources is more likely to be correct so you go with it.
+						</p>
+					</section>
+					<section>
+						<h2>Data Processing</h2>
+						<h3>Data Cleansing -- Misshapen Data</h3>
+						<p>
+							Data stored in flat files or textual format can end up misshapen--some rows may not have enough delimiters (or maybe too many), there could be newlines in the middle of a record, or the file cuts off in the middle of a record.
+						</p>
+						<p>
+							This is a problem with flat files and certain semi-structured data formats. It is not a problem with relational databases, where data shape is enforced.
+						</p>
+					</section>
+					<section>
+						<h2>Data Processing</h2>
+						<h3>Data Shaping</h3>
+						<p>
+							There are several techniques we can use to reshape data to make it easier to analyze:
+							<ul>
+								<li>Vectorize words (turn each word into a number)</li>
+								<li>Turn strings into factors (categorical data)</li>
+								<li>Normalize values (transform numeric data to have a mean of 0 and standard deviation of 1)</li>
+								<li>Bin data, converting continuous variables to discrete</li>
+							</ul>
+						</p>
+					</section>
+					<section>
+						<h2>Data Processing</h2>
+						<h3>Data Cleansing -- Demo</h3>
+					</section>
+				</section>
+				
+				<section>
+					<section>
+						<h2>Data Processing</h2>
+						<h3>Data Analysis</h3>
+						<p>
+							The most common technique for data analysis at this point is Exploratory Data Analysis (EDA). The purpose of Exploratory Data Analysis is to summarize the data in a way that gives you a better understanding of the data. Examples of EDA techniques include:
+							<ul>
+								<li>Getting count and cardinality of features</li>
+								<li>Building out 5-number summaries</li>
+								<li>Visualizing data, especially with box plots and histograms</li>
+								<li>Determining correlation between variables</li>
+							</ul>
+						</p>
+					</section>
+					<section>
+						<h2>Data Processing</h2>
+						<h3>Data Analysis -- Cardinality</h3>
+						<p>
+							The cardinality of a feature is the number of unique values.
+						</p>
+						<p>
+							<img src="Cardinality.png" height="500" width="600" />
+						</p>
+					</section>
+					<section>
+						<h2>Data Processing</h2>
+						<h3>Data Analysis -- 5-Number Summary</h3>
+						<p>
+							The five-number summary of a feature tells us the minimum value, value at the 25% mark, value at the 50% mark, value at the 75% mark, and maximum value. The mean technically is not part of the five-number summary, but can be useful to know as well.
+						</p>
+						<p>
+							<img src="FiveNumber.png" />
+						</p>
+					</section>
+					<section>
+						<h2>Data Processing</h2>
+						<h3>Data Analysis -- Box Plot</h3>
+						<p>
+							Box plots show us the five-number summary by group:
+						</p>
+						<p>
+							<img src="BoxPlot.png" />
+						</p>
+					</section>
+					<section>
+						<h2>Data Processing</h2>
+						<h3>Data Analysis -- Histogram</h3>
+						<p>
+							Histograms show the data spread:
+						</p>
+						<p>
+							<img src="Histogram.png" height="500" width="360" />
+						</p>
+					</section>
+					<section>
+						<h2>Data Processing</h2>
+						<h3>Data Analysis -- Correlation</h3>
+						<p>
+							Having two highly-correlated explanatory variables can interfere with your analysis--this is called multicollinearity and leads to incorrect estimates of the explanatory power of a particular variable.
+						</p>
+						<p>
+							For example, if we have an analysis which predicts plant growth based on amount of rainfall and amount of precipitation, we have collinearity between rainfall and precipitation because precipitation might be rainfall + snowfall, so they generally move together. It becomes harder for a model to differentiate the two variables and assign the correct weight.
+						</p>
+					</section>
+					<section>
+						<h2>Data Processing</h2>
+						<h3>Data Analysis -- Correlation</h3>
+						<p>
+							Here we have two comparisons, depth vs table and x vs y. Depth and table are mildly negatively correlated; this isn't a problem. The x and y variables, however, are very highly correlated. Some models, such as linear regression, may exhibit problems if you include both x and y in your analysis.
+						</p>
+						<p>
+							<img src="Correlation.png" />
+						</p>
+					</section>
+					<section>
+						<h2>Data Processing</h2>
+						<h3>Data Analysis -- Demo</h3>
+					</section>
+				</section>
+				
+				<section>
+					<section>
+						<h2>Agenda</h2>
+						<ol>
+							<li>Business Understanding</li>
+							<li>Data Processing</li>
+							<li class="active">Modeling</li>
+							<li>Deployment</li>
+							<li>What's Next?</li>
+						</ol>
+					</section>
+					<section>
+						<h2>Modeling</h2>
+						<p>
+							Modeling has five major steps:
+							<ul>
+								<li>Feature Engineering</li>
+								<li>Feature Selection</li>
+								<li>Model Selection & Training</li>
+								<li>Model Evaluation</li>
+								<li>Model Tuning</li>
+							</ul>
+						</p>
+					</section>
+					<section>
+						<h2>Modeling</h2>
+						<h3>Feature Engineering</h3>
+						<p>Feature engineering involves creating relevant features from raw data. These can include things like:
+							<ul>
+								<li>Indicator flags (Age >= 21, Income >= $100K)</li>
+								<li>Calculations (ClickThroughRate = Clicks / Impressions)</li>
+								<li>Geocoding latitude and longitude from a street address</li>
+								<li>Aggregating data (by day, by hour, by 36-hour period)</li>
+								<li>Text processing -- turning words into arbitrary numbers for numeric analysis (TF-IDF, Word2Vec)</li>
+							</ul>
+						</p>
+					</section>
+					<section>
+						<h2>Modeling</h2>
+						<h3>Feature Selection</h3>
+						<p>
+							We use feature selection to winnow down the available set of features, removing redundant, unnecessary, or highly correlated features.  There are several reasons to do this:
+							<ul>
+								<li>Collinearity -- one explanatory variable can predict another, which makes analysis less precise.</li>
+								<li>Make analysis easier for a human to understand by removing irrelevant or redundant features.</li>
+								<li>More efficient training with fewer variables.</li>
+								<li>Reduce the risk of an irrelevant or redundant feature causing spurious correlation.</li>
+							</ul>
+						</p>
+					</section>
+					<section>
+						<h2>Modeling</h2>
+						<p>
+							<img src="SpuriousCorrelation.png" />
+						</p>
+						<p>(<a href="http://www.tylervigen.com/spurious-correlations">Source</a>)</p>
+					</section>
+					<section>
+						<h2>Modeling</h2>
+						<h3>Model Training</h3>
+						<p>
+							We take some percentage of our total data and designate it for training / validation, and the remainder is for evaluation. There are no hard rules on percentages, but typically, we reserve 70-80% for training.
+						</p>
+						<p>
+							There are four major branches of algorithms:
+							<ul>
+								<li>Supervised learning</li>
+								<li>Unsupervised learning</li>
+								<li>Self-supervised learning</li>
+								<li>Reinforcement learning</li>
+							</ul>
+						</p>
+					</section>
+					<section>
+						<h2>Modeling</h2>
+						<h3>Supervised Learning</h3>
+						<p>
+							Supervised learning models require known answers (labels). We train a model to map input data to those labels in order to have the model predict the correct answer for unlabeled records. Major classes of supervised learning models and their pertinent driving questions include:
+							<ul>
+								<li>Regression -- How much?</li>
+								<li>Classification -- Which?</li>
+								<li>Recommendation -- What next?</li>
+							</ul>
+						</p>
+					</section>
+					<section>
+						<h2>Modeling</h2>
+						<h3>Unsupervised Learning</h3>
+						<p>
+							With unsupervised learning, we do not know the answers beforehand and try to derive answers. We can use unsupervised learning to drive toward a supervised problem by giving data analysts insight into the nature of the problem. Major classes of unsupervised learning models and their pertinent driving questions include:
+							<ul>
+								<li>Clustering -- How can we segment?</li>
+								<li>Dimensionality reduction -- What of this data is useful?</li>
+							</ul>
+						</p>
+					</section>
+					<section>
+						<h2>Modeling</h2>
+						<h3>Self-Supervised Learning</h3>
+						<p>
+							This is a subset of supervised learning, but with the popularity of neural networks, has come into its own. We use heuristics to guesstimate labels and train the model that way. An example of self-supervised learning is predicting the next word in a document based on previous words.
+						</p>
+						<p>Self-supervised learning typically happens with neural networks.</p>
+					</section>
+					<section>
+						<h2>Modeling</h2>
+						<h3>Reinforcement Learning</h3>
+						<p>
+							Reinforcement learning is where we train an agent to observe its environment and use those environmental clues to make a decision. 
+						</p>
+						<p><img src="MariFlow.png" height="380" /></p>
+					</section>
+					<section>
+						<h2>Modeling</h2>
+						<h3>Choose An Algorithm</h3>
+						<p>
+							Once you understand the nature of the problem, you can choose an algorithm.  There are often several potential algorithms which can solve the problem, so you will want to try different algorithms and compare. The major trade-offs between algorithms typically include:
+							<ul>
+								<li>Accuracy</li>
+								<li>Training time</li>
+								<li>Ability to understand the result</li>
+								<li>Number of parameters</li>
+								<li>Number of features allowed</li>
+							</ul>
+						</p>
+					</section>
+					<section>
+						<p>
+							<img src="Algorithms.png" />
+						</p>
+					</section>
+					<section>
+						<h2>Modeling</h2>
+						<h3>Choose An Algorithm</h3>
+						<p>
+							Once you have an algorithm, features, and labels (if supervised), you can train the algorithm. Training a model is solving a system of equations, minimizing a loss function.
+						</p>
+						<p><img src="LinearRegression.png" height="390" /></p>
+					</section>
+					<section>
+						<h2>Modeling</h2>
+						<h3>Validate The Model</h3>
+						<p>
+							Instead of using up all of our data for training, we typically want to perform some level of validation within our training data set to ensure that we are on the right track and are not overfitting.
+						</p>
+						<p>
+							Overfitting happens when a model latches on to the particulars of a data set, leaving it at risk of not being able to generalize to new data. The easy way to tell if you are overfitting is to test your model against unseen data, and if there is a big dropoff in model accuracy between training and testing data, you are likely overfitting.
+						</p>
+					</section>
+					<section>
+						<h2>Modeling</h2>
+						<h3>Cross-Validation</h3>
+						<p>
+							Cross-validation is a technique where we slice and dice the training data, training our model with different subsets of the total data. The purpose here is to find a model which is fairly robust to the particulars of a subset of training data, thereby reducing the risk of overfitting.
+						</p>
+					</section>
+					<section>
+						<h2>Modeling</h2>
+						<h3>Tune The Model</h3>
+						<p>
+							Most models have <strong>hyperparameters</strong>. For neural networks, the number of training epochs is a hyperparameter. For random forests, hyperparameters include things like the size of each decision tree and the number of trees.
+						</p>
+						<p>
+							We tune hyperparameters using our validation data set.
+						</p>
+					</section>
+					<section>
+						<h2>Modeling</h2>
+						<h3>Evaluate The Model</h3>
+						<p>
+							Model evaluation happens when we send new data to the model that it has never before seen. This is data that we did not use at all during the training and validation process. We have to be careful not to let any information leak into the training data, meaning that we should never feed aggregates of training + evaluation data to a model.
+						</p>
+						<p>
+							If we fail to safeguard this data, we can end up overfitting our model to the test data, leaving it less suited for the real-world data outside of our sample.
+						</p>
+					</section>
+					<section>
+						<h2>Modeling</h2>
+						<h3>Evaluate The Model</h3>
+						<p>
+							You can also build a fitness function to evaluate certain types. Genetic algorithms are a common tool for this.
+						</p>
+						<p>
+							<img src="MarIO.png" height="400" />
+						</p>
+					</section>
+					<section>
+						<h2>Modeling</h2>
+						<h3>Demo Time</h3>
+					</section>
+				</section>
+				
+				<section>
+					<section>
+						<h2>Agenda</h2>
+						<ol>
+							<li>Business Understanding</li>
+							<li>Data Processing</li>
+							<li>Modeling</li>
+							<li class="active">Deployment</li>
+							<li>What's Next?</li>
+						</ol>
+					</section>
+					<section>
+						<h2>Deployment</h2>
+						<p>Back in the day, one team would build a solution in an analytics language (e.g., R) but you would not go to production with that.</p>
+						<p>Instead, an implementation team would rewrite your model in C++ or some other fast language.</p>
+						<p>Those days of research versus implementation teams using completely different languages are now (mostly) gone.</p>
+					</section>
+					<section>
+						<h2>Deployment</h2>
+						<p>Welcome to the era of the microservice:  many small services dedicated to providing a single answer to a single problem.</p>
+						<p>Most microservices are exposed via web calls, although other forms of interoperation are still possible. The big benefit to web calls is that I can write my service in R, you can call it in Python, and then someone can call your service from .NET.</p>
+					</section>
+					<section>
+						<h2>Deployment</h2>
+						<p>Once you have a model ready to go, there are tools which make it relatively easy to deploy scalable predictive services.  For example, DeployR:</p>
+						<p><img src="deployrworkflow.png" />
+					</section>
+					<section>
+						<h2>Deployment</h2>
+						<p>You can also build your own services.  Stacks that I've put into production include:
+							<ul>
+								<li>WebAPI (C#) ==> SQL Server Machine Learning Services ==> Microsoft Machine Learning with R</li>
+								<li>WebAPI (C#) ==> Nginx ==> Flask/Gunicorn ==> Keras with Python</li>
+							</ul>
+						</p>
+						<p>With a microservices architecture, you're trying to plug in these new APIs while not forcing everybody else to change their skills.</p>
+					</section>
+					<section>
+						<h2>Deployment</h2>
+						<p>SQL Server Machine Learning Services, in particular, is great when the input data is already stored in SQL Server. With certain types of models, you can make "real-time" predictions.</p>
+						<p>Our scenario was complex enough that we pre-trained a large number of models and stored the results in SQL Server for later prediction.</p>
+					</section>
+					<section>
+						<h2>Deployment</h2>
+						<p>Another option is notebooks, which help you record your work for subsequent review. Jupyter (Julia + Python + R) and Apache Zeppelin are two great examples of notebooks.</p>
+						<p><img src="Jupyter.png" height="350" /></p>
+						<p>Notebooks are great for pedagogical purposes.</p>
+					</section>
+					<section>
+						<h2>Deployment</h2>
+						<p>Shiny is an interactive visualization product combining JavaScript and R. This is more for visualizing data rather than integrating with other services.</p>
+						<p><img src="Shiny.png" height="450" /></p>
+					</section>
+					<section>
+						<h2>Deployment</h2>
+						<h3>Demo Time</h3>
+					</section>
+				</section>
+				
+				<section>
+					<section>
+						<h2>Agenda</h2>
+						<ol>
+							<li>Business Understanding</li>
+							<li>Data Processing</li>
+							<li>Modeling</li>
+							<li>Deployment</li>
+							<li class="active">What's Next?</li>
+						</ol>
+					</section>
+					<section>
+						<h2>What's Next?</h2>
+						<p>After go-live, the job is not complete.</p>
+						<p>It is important to keep checking the efficacy of models. Model shift happens, where a model might have been good at one point in time but becomes progressively worse over time as circumstances change.</p>
+						<p>You may also find out that your training/testing data was not truly indicative of real-world data.</p>
+					</section>
+					<section>
+						<h2>What's Next?</h2>
+						<p>Occasionally, you will take new production data and retrain the model.  This works best if you keep track of your model's predictions and actual outcomes so you can tell the actual efficacy of the model.</p>
+						<p>Depending upon your choice of algorithm, you might be able to update the existing model with the latest information. If you create a process whereby the service you've created automatically feeds the data back to your model, you have true machine learning.</p>
+						<p>Some algorithms, however, require you to retrain from scratch.</p>
+					</section>
+					<section>
+						<h2>What's Next?</h2>
+						<p>Regardless of model efficacy, you will want to confer with those stakeholders and ensure that your model fits their needs. Then, repeat the process.</p>
+						<p>In a production scenario, you will start with a Minimum Viable Product (MVP) to gauge interest. If there is sufficient interest, you can add incremental improvements.  That could include expanding the base of predictions, making more accurate predictions, improving the speed of your service, or adding new functionality.</p>
+					</section>
+					<section>
+						<h2>What's Next?</h2>
+						<p>The moral of the story:  a data plumber's work is never done.</p>
+						<p><img src="MarioGames.jpg" /></p>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2>Wrapping Up</h2>
+						<p>Over the course of today's talk, we have covered the Microsoft Team Data Science Process as well as a pragmatic implementation of a data science workflow. Following a stable process allows you to maximize the chances of developing a high-quality and effective model.</p>
+					</section>
+					<section>
+						<h2>Wrapping Up</h2>
+						<p>To learn more, go here:  <a href="http://csmore.info/on/datascience">http://CSmore.info/on/datascience</a></p>
+						<p>And for help, contact me:  <a href="mailto:feasel@catallaxyservices.com">feasel@catallaxyservices.com</a> | <a href="https://twitter.com/feaselkl">@feaselkl</a></p>
+					</section>
+				</section>
+			</div>
+
+		</div>
+
+		<script src="../reveal-js/lib/js/head.min.js"></script>
+		<script src="../reveal-js/js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: '../reveal-js/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: '../reveal-js/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: '../reveal-js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: '../reveal-js/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: '../reveal-js/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: '../reveal-js/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+					// { src: 'plugin/search/search.js', async: true, condition: function() { return !!document.body.classList; } }
+					// { src: 'plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>

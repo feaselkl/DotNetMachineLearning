@@ -28,7 +28,7 @@ namespace DotNetMachineLearning.Controllers
 			MLContext mlContext = new MLContext(seed: 9997);
 			BillsModelTrainer bmt = new BillsModelTrainer();
 
-			var data = bmt.GetRawData(mlContext, "C:\\Temp\\2018Bills.csv");
+			var data = bmt.GetRawData(mlContext, "2018Bills.csv");
 			var model = bmt.TrainModel(mlContext, data);
 
 			PredictionEngineBase<RawInput, Prediction> predictor = model.CreatePredictionEngine<RawInput, Prediction>(mlContext);
