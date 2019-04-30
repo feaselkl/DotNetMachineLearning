@@ -155,13 +155,13 @@ Some of us had to experience the 2018 Bills season.  Let's see what we can learn
 
 ### Example
 
-Questions we can ask given our domain knowledge:
+Questions based on our domain knowledge:
 
 * **How much** money does Charles Clay make not to catch that ball?
 * **Which category** of outcome (win, loss, tie) is most likely for a particular roster configuration?
-* **How can we segment** the Bills victories?  Their losses?
+* **How can we segment** the Bills victories?
 * Is it **weird** that Kelvin Benjamin is built like a power forward but plays like Muggsy Bogues in leg irons?
-* **Which free agent signing should I choose** if I want the pain to end?
+* **Which free agent signing** will help end the pain?
 
 ---?image=presentation/assets/background/connection.jpg&size=cover&opacity=20
 
