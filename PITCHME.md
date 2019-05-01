@@ -46,7 +46,7 @@
 @divend
 
 @div[right-50]
-In today's talk, we will look at one particular process:  the Microsoft Team Data Science Process.
+In today's talk, we will apply the Microsoft Team Data Science Process to solving a problem using ML.NET.
 @divend
 
 ---?image=presentation/assets/background/typewriter.jpg&size=cover&opacity=20
