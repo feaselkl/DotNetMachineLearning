@@ -5,7 +5,7 @@
 ## Machine Learning with .NET
 
 <a href="https://www.catallaxyservices.com">Kevin Feasel</a> (<a href="https://twitter.com/feaselkl">@feaselkl</a>)
-<a href="https://csmore.info/on/datascience">https://CSmore.info/on/dotnetml</a>
+<a href="https://csmore.info/on/dotnetml">https://CSmore.info/on/dotnetml</a>
 
 ---
 
@@ -748,6 +748,6 @@ Our implementation tool of choice was ML.NET, Microsoft's official library for m
 
 ### Wrapping Up
 
-To learn more, go here:  <a href="https://csmore.info/on/datascience">https://CSmore.info/on/datascience</a>
+To learn more, go here:  <a href="https://csmore.info/on/dotnetml">https://CSmore.info/on/dotnetml</a>
 
 And for help, contact me:  <a href="mailto:feasel@catallaxyservices.com">feasel@catallaxyservices.com</a> | <a href="https://www.twitter.com/feaselkl">@feaselkl</a>
