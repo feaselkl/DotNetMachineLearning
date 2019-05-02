@@ -14,13 +14,17 @@ namespace DotNetMachineLearning.BillsNaiveBayes
 			return mlContext.Data.LoadFromTextFile<RawInput>(path: inputPath, hasHeader: true, separatorChar: ',');
 		}
 
-		public TransformerChain<Microsoft.ML.Transforms.KeyToValueMappingTransformer> TrainModel(MLContext mlContext, IDataView data)
+		public TransformerChain<Microsoft.ML.Transforms.KeyToValueMappingTransformer> TrainModel(
+			MLContext mlContext, IDataView data)
 		{
 			var pipeline =
-				mlContext.Transforms.CustomMapping<QBInputRow, QBOutputRow>(QBCustomMappings.QBMapping, nameof(QBCustomMappings.QBMapping))
-				.Append(mlContext.Transforms.CustomMapping<PointsInputRow, PointsOutputRow>(PointsCustomMappings.PointsMapping, nameof(PointsCustomMappings.PointsMapping)))
+				mlContext.Transforms.CustomMapping<QBInputRow, QBOutputRow>(
+					QBCustomMappings.QBMapping, nameof(QBCustomMappings.QBMapping))
+				.Append(mlContext.Transforms.CustomMapping<PointsInputRow, PointsOutputRow>(
+					PointsCustomMappings.PointsMapping, nameof(PointsCustomMappings.PointsMapping)))
 				// We could potentially use these features for a different model like a fast forest.
-				.Append(mlContext.Transforms.DropColumns(new[] { "NumberOfSacks", "NumberOfDefensiveTurnovers", "MinutesPossession" }))
+				.Append(mlContext.Transforms.DropColumns(new[] { "NumberOfSacks", "NumberOfDefensiveTurnovers",
+					"MinutesPossession" }))
 				.Append(mlContext.Transforms.DropColumns(new[] { "Game", "Quarterback" }))
 				.Append(mlContext.Transforms.Concatenate("FeaturesText", new[]
 				{
@@ -32,8 +36,9 @@ namespace DotNetMachineLearning.BillsNaiveBayes
 				.Append(mlContext.Transforms.Text.FeaturizeText("Features", "FeaturesText"))
 				// Label is text so it needs to be mapped to a key
 				.Append(mlContext.Transforms.Conversion.MapValueToKey("Label"), TransformerScope.TrainTest)
-				// Naive Bayes is prety good
-				.Append(mlContext.MulticlassClassification.Trainers.NaiveBayes(labelColumnName: "Label", featureColumnName: "Features"))
+				// Naive Bayes is pretty good
+				.Append(mlContext.MulticlassClassification.Trainers.NaiveBayes(
+					labelColumnName: "Label", featureColumnName: "Features"))
 				// Logistic regression is awful
 				//.Append(mlContext.MulticlassClassification.Trainers.LogisticRegression(labelColumnName: "Label", featureColumnName: "Features"))
 				// Stochastic DCA is good but SLOW
