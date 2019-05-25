@@ -5,9 +5,14 @@ VisualStudioVersion = 16.0.28803.156
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetMachineLearning", "DotNetMachineLearning\DotNetMachineLearning.csproj", "{B327E8C0-F048-46C0-B0CB-D7AE35A5D3A1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetMachineLearning.BillsModelTrainer", "DotNetMachineLearning.NaiveBayes\DotNetMachineLearning.BillsModelTrainer.csproj", "{E728190F-89A2-4A23-AF7B-B84846159E98}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetMachineLearning.BillsModelTrainer", "DotNetMachineLearning.NaiveBayes\DotNetMachineLearning.BillsModelTrainer.csproj", "{E728190F-89A2-4A23-AF7B-B84846159E98}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetMachineLearning.Tests", "DotNetMachineLearning.Tests\DotNetMachineLearning.Tests.csproj", "{96D1ED77-7304-40F8-AA30-4FBBE2B340A4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetMachineLearning.Tests", "DotNetMachineLearning.Tests\DotNetMachineLearning.Tests.csproj", "{96D1ED77-7304-40F8-AA30-4FBBE2B340A4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B69AF3FA-ECC5-48E1-8FA7-418F76759802}"
+	ProjectSection(SolutionItems) = preProject
+		SentimentAnalysis\Tweets.csv = SentimentAnalysis\Tweets.csv
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

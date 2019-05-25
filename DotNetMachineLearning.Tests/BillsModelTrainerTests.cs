@@ -1,7 +1,6 @@
 using NUnit.Framework;
 using DotNetMachineLearning.BillsNaiveBayes;
 using Microsoft.ML;
-using Microsoft.ML.Data;
 using System;
 
 namespace Tests
@@ -23,7 +22,7 @@ namespace Tests
 			var data = bmt.GetRawData(mlContext, "Resources\\2018Bills.csv");
 			model = bmt.TrainModel(mlContext, data);
 
-			predictor = model.CreatePredictionEngine<RawInput, Prediction>(mlContext);
+			predictor = mlContext.Model.CreatePredictionEngine<RawInput, Prediction>(model);
 		}
 
 		[TestCase(new object[] { "Josh Allen", "Home", 17, "Robert Foster", "LeSean McCoy", "Win" })]
@@ -81,7 +80,7 @@ namespace Tests
 
 			var newModel = bmt.LoadModel(mlContext, modelPath);
 
-			var newPredictor = newModel.CreatePredictionEngine<RawInput, Prediction>(mlContext);
+			var newPredictor = mlContext.Model.CreatePredictionEngine<RawInput, Prediction>(newModel);
 			var po = GenerateOutcome(predictor);
 			var npo = GenerateOutcome(newPredictor);
 

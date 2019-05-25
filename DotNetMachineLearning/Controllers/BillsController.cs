@@ -26,7 +26,7 @@ namespace DotNetMachineLearning.Controllers
 			var data = bmt.GetRawData(mlContext, "2018Bills.csv");
 			var model = bmt.TrainModel(mlContext, data);
 
-			PredictionEngineBase<RawInput, Prediction> predictor = model.CreatePredictionEngine<RawInput, Prediction>(mlContext);
+			PredictionEngineBase<RawInput, Prediction> predictor = mlContext.Model.CreatePredictionEngine<RawInput, Prediction>(model);
 			var outcome = predictor.Predict(new RawInput
 			{
 				Game = 0,

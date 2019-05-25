@@ -9,7 +9,8 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.ML" Version="0.11.0" />
+    <PackageReference Include="Microsoft.ML" Version="1.0.0" />
+    <PackageReference Include="Microsoft.ML.DataView" Version="1.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />
   </ItemGroup>
 

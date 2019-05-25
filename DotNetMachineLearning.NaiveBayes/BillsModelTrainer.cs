@@ -1,9 +1,7 @@
 ﻿using System;
 using System.IO;
-using Microsoft.Data.DataView;
 using Microsoft.ML;
 using Microsoft.ML.Data;
-using Microsoft.ML.Transforms;
 
 namespace DotNetMachineLearning.BillsNaiveBayes
 {
@@ -54,7 +52,7 @@ namespace DotNetMachineLearning.BillsNaiveBayes
 		{
 			using (var stream = File.Create(modelPath))
 			{
-				mlContext.Model.Save(model, stream);
+				mlContext.Model.Save(model, null, stream);
 			}
 		}
 
@@ -63,7 +61,8 @@ namespace DotNetMachineLearning.BillsNaiveBayes
 			ITransformer loadedModel;
 			using (var stream = File.OpenRead(modelPath))
 			{
-				loadedModel = mlContext.Model.Load(stream);
+				DataViewSchema dvs;
+				loadedModel = mlContext.Model.Load(stream, out dvs);
 			}
 
 			return loadedModel;

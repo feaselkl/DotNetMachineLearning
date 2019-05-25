@@ -5,17 +5,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="RawData\2018Bills.csv" />
+    <Compile Remove="RawData\**" />
+    <EmbeddedResource Remove="RawData\**" />
+    <None Remove="RawData\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.ML" Version="0.11.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Resource Include="RawData\2018Bills.csv">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
+    <PackageReference Include="Microsoft.ML" Version="1.0.0" />
+    <PackageReference Include="Microsoft.ML.DataView" Version="1.0.0" />
   </ItemGroup>
 
 </Project>
