@@ -13,3 +13,4 @@ highlight : atom-one-light
 transition : none
 published : true
 footnote : "Machine Learning with .NET | https://csmore.info/on/dotnetml"
+eager-loading : true
