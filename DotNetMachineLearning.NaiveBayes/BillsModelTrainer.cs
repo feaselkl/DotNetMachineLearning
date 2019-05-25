@@ -37,10 +37,10 @@ namespace DotNetMachineLearning.BillsNaiveBayes
 				// Naive Bayes is pretty good
 				.Append(mlContext.MulticlassClassification.Trainers.NaiveBayes(
 					labelColumnName: "Label", featureColumnName: "Features"))
-				// Logistic regression is awful
-				//.Append(mlContext.MulticlassClassification.Trainers.LogisticRegression(labelColumnName: "Label", featureColumnName: "Features"))
+				// L-BFGS is awful
+				//.Append(mlContext.MulticlassClassification.Trainers.LbfgsMaximumEntropy(labelColumnName: "Label", featureColumnName: "Features"))
 				// Stochastic DCA is good but SLOW
-				//.Append(mlContext.MulticlassClassification.Trainers.StochasticDualCoordinateAscent(labelColumnName: "Label", featureColumnName: "Features"))
+				//.Append(mlContext.MulticlassClassification.Trainers.SdcaNonCalibrated(labelColumnName: "Label", featureColumnName: "Features"))
 				.Append(mlContext.Transforms.Conversion.MapKeyToValue("PredictedOutcome", "PredictedLabel"));
 
 			var model = pipeline.Fit(data);

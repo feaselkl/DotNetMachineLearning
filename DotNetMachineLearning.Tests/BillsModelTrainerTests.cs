@@ -2,6 +2,7 @@ using NUnit.Framework;
 using DotNetMachineLearning.BillsNaiveBayes;
 using Microsoft.ML;
 using System;
+using System.Diagnostics;
 
 namespace Tests
 {
