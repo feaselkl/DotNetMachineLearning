@@ -1,0 +1,88 @@
+# Presentation
+This is the GitHub repo for <a href="https://www.catallaxyservices.com/presentations/dotnetml/">my presentation entitled Machine Learning with .NET</a>.
+
+# Lab
+This is also a repo for a lab.  What follows are the lab steps.
+
+## Phase One:  Prep Work
+
+1. Download and install the <a href="https://marketplace.visualstudio.com/items?itemName=MLNET.07">Microsoft ML.NET Model Builder</a> and install it.  This installer works for Visual Studio 2017 and Visual Studio 2019, so you will need at least one of these two installed beforehand.
+2. Clone this GitHub repository or download the solution as a zip file.
+3. Open the solution and ensure that you are able to build everything successfully.
+
+## Phase Two:  Predict Buffalo Bills Outcomes
+
+1. Review the three projects:  `DotNetMachineLearning`, `DotNetMachineLearning.BillsTrainer`, and `DotNetMachineLearning.Tests`.
+2. In the Visual Studio Test Explorer, run all tests to ensure that your solution is configured correctly.
+3. Create a new unit test in `DotNetMachineLearning.Tests` called `WriteOutModelAccuracy()`.  Fill it in with the following code:
+
+```c#
+[Test()]
+public void WriteOutModelAccuracy()
+{
+	// Note that this is the *training* accuracy.  We are reusing the same data.
+	// There is likely to be overfitting in here, so keep that in mind.
+	var data = bmt.GetRawData(mlContext, "Resources\\2018Bills.csv");
+	var metrics = mlContext.MulticlassClassification.Evaluate(model.Transform(data));
+
+	Console.WriteLine($"Macro Accuracy = {metrics.MacroAccuracy}; Micro Accuracy = {metrics.MicroAccuracy}");
+	Console.WriteLine($"Confusion Matrix with {metrics.ConfusionMatrix.NumberOfClasses} classes.");
+	Console.WriteLine($"{metrics.ConfusionMatrix.GetFormattedConfusionTable()}");
+
+	Assert.AreNotEqual(0, metrics.MacroAccuracy);
+}
+```
+
+4. Run The `WriteOutModelAccuracy()` test for Naive Bayes and record the micro and macro accuracies as well as the confusion matrix.  You will find this if you click the `Output` link on the test results page.
+5. In `DotNetMachineLearning.BillsModelTrainer.BillsModelTrainer.cs`, comment out the lines for Naive Bayes (38-39) and try L-BFGS (a limited-memory quasi-Newton optimization algorithm).  Run the `WriteOutModelAccuracy()` test again and note the results.
+6. Comment out the L-BFGS line and train a Stochastic Dual Coordinate Ascent model.  Run the `WriteOutModelAccuracy()` test again and note the results.
+7. Review the other multi-class classifier algorithms available to you and try them out.
+
+## Phase Three:  Sentiment Analysis
+
+Unlike phase two, we will not start with a project.
+
+1. Right-click on the `DotNetMachineLearning.BillsModelTrainer` and go to `Add -> Machine Learning`.
+2. Select "Sentiment Analysis."
+3. Select Tweets.csv from the Sentiment Analysis folder.  Scroll down and select the "Train" link.
+4. Keep the training time at 10 seconds and click "Start training."
+5. After it completes, click the "Evaluate" link and review the results.
+6. Click on the `3. Train` link and change the time from 10 seconds to a higher value.  Try a few different values.
+7. When you have a viable model, click the "Code" link.  Then, click the "Add Projects" button.
+
+Then, review `DotNetMachineLearningML.ConsoleApp`.  Set this project as your startup project and run it.
+
+### Changing the Console App
+
+Once you have tried out the console app, change the main method to the following:
+
+```c#
+static void Main(string[] args)
+{
+	MLContext mlContext = new MLContext();
+
+	ITransformer mlModel = mlContext.Model.Load(GetAbsolutePath(MODEL_FILEPATH), out DataViewSchema inputSchema);
+	var predEngine = mlContext.Model.CreatePredictionEngine<ModelInput, ModelOutput>(mlModel);
+
+	Console.WriteLine("Enter a sample tweet:");
+	var text = Console.ReadLine();
+
+	// Create sample data to do a single prediction with it 
+	ModelInput sampleData = CreateModelInput(mlContext, text);
+
+	// Try a single prediction
+	ModelOutput predictionResult = predEngine.Predict(sampleData);
+	string outcome = predictionResult.Prediction ? "Positive tweet" : "Negative tweet";
+	Console.WriteLine($"Single Prediction --> Predicted value: {outcome}");
+
+	Console.WriteLine("=============== End of process, hit any key to finish ===============");
+	Console.ReadKey();
+}
+```
+
+This will allow you to try out entering sample tweets.
+
+# Datasets
+The Buffalo Bills data set was hand-entered from the <a href="https://www.pro-football-reference.com/teams/buf/2018.htm">Pro Football Reference website</a>.  This data set is shared under the terms of the GPL 3.0 license.
+
+The airline sentiment analysis data set is <a href="https://www.kaggle.com/crowdflower/twitter-airline-sentiment">originally from a Kaggle data set</a>.  I modified the data set to remove Neutral entries, to recode "positive" and "negative" as 1 and 0, respsectively, and to remove newline characters.  This data set is shared under terms of <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons CC BY-NC-SA 4.0</a>.
