@@ -8,13 +8,14 @@ This is also a repo for a lab.  What follows are the lab steps.
 
 1. Download and install the <a href="https://marketplace.visualstudio.com/items?itemName=MLNET.07">Microsoft ML.NET Model Builder</a> and install it.  This installer works for Visual Studio 2017 and Visual Studio 2019, so you will need at least one of these two installed beforehand.
 2. Clone this GitHub repository or download the solution as a zip file.
-3. Open the solution and ensure that you are able to build everything successfully.
+3. Open the solution and ensure that you are able to build everything successfully.  You may need to change the project to use .NET Core 2.1 instead of 2.2.  If you do not already have .NET Core, grab it from [the Microsoft website](https://dotnet.microsoft.com/download).
 
 ## Phase Two:  Predict Buffalo Bills Outcomes
 
 1. Review the three projects:  `DotNetMachineLearning`, `DotNetMachineLearning.BillsTrainer`, and `DotNetMachineLearning.Tests`.
-2. In the Visual Studio Test Explorer, run all tests to ensure that your solution is configured correctly.
-3. Create a new unit test in `DotNetMachineLearning.Tests` called `WriteOutModelAccuracy()`.  Fill it in with the following code:
+2. Open `BillsModelTrainerTest.cs` and navigate to the `SaveAndLoadModel()` test.  It points to a directory, `C:\Temp`.  If you already have a folder named `Temp` on your C drive and you are okay with using it, you can leave this alone.  Otherwise, change the string to point to a location where you would like to save the model file.
+3. In the Visual Studio Test Explorer, run all tests to ensure that your solution is configured correctly.
+4. Create a new unit test in `DotNetMachineLearning.Tests` called `WriteOutModelAccuracy()`.  Fill it in with the following code:
 
 ```c#
 [Test()]
@@ -33,10 +34,10 @@ public void WriteOutModelAccuracy()
 }
 ```
 
-4. Run The `WriteOutModelAccuracy()` test for Naive Bayes and record the micro and macro accuracies as well as the confusion matrix.  You will find this if you click the `Output` link on the test results page.
-5. In `DotNetMachineLearning.BillsModelTrainer.BillsModelTrainer.cs`, comment out the lines for Naive Bayes (38-39) and try L-BFGS (a limited-memory quasi-Newton optimization algorithm).  Run the `WriteOutModelAccuracy()` test again and note the results.
-6. Comment out the L-BFGS line and train a Stochastic Dual Coordinate Ascent model.  Run the `WriteOutModelAccuracy()` test again and note the results.
-7. Review the other multi-class classifier algorithms available to you and try them out.
+5. Run The `WriteOutModelAccuracy()` test for Naive Bayes and record the micro and macro accuracies as well as the confusion matrix.  You will find this if you click the `Output` link on the test results page.
+6. In `DotNetMachineLearning.BillsModelTrainer.BillsModelTrainer.cs`, comment out the lines for Naive Bayes (38-39) and try L-BFGS (a limited-memory quasi-Newton optimization algorithm).  Run the `WriteOutModelAccuracy()` test again and note the results.
+7. Comment out the L-BFGS line and train a Stochastic Dual Coordinate Ascent model.  Run the `WriteOutModelAccuracy()` test again and note the results.
+8. Review the other multi-class classifier algorithms available to you and try them out.
 
 ## Phase Three:  Sentiment Analysis
 
