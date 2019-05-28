@@ -232,7 +232,7 @@ In this example, we will use Pro Football Reference to get high-level measures l
 
 Most of the time, we perform **supervised** learning, which has two key terms:  **features** and **labels**.
 
-**Features** are the columns you have available for prediction.  These can come from multiple sources and be the end product of a lot of ETL.  Example features can include number of yards rushing or passing, number of defensive turnovers, numbers of points scored, etc.
+**Features** are the columns you have available for prediction.  These can come from multiple sources and be the end product of a lot of ETL.  Example features can include number of yards rushing or passing, number of defensive turnovers, etc.
 
 The **label** is the column you want to predict, and you have historical data.  For example, our label is whether the Bills won the game or not.
 
