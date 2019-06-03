@@ -15,29 +15,8 @@ This is also a repo for a lab.  What follows are the lab steps.
 1. Review the three projects:  `DotNetMachineLearning`, `DotNetMachineLearning.BillsTrainer`, and `DotNetMachineLearning.Tests`.
 2. Open `BillsModelTrainerTest.cs` and navigate to the `SaveAndLoadModel()` test.  It points to a directory, `C:\Temp`.  If you already have a folder named `Temp` on your C drive and you are okay with using it, you can leave this alone.  Otherwise, change the string to point to a location where you would like to save the model file.
 3. In the Visual Studio Test Explorer, run all tests to ensure that your solution is configured correctly.
-4. Create a new unit test in `DotNetMachineLearning.Tests` called `WriteOutModelAccuracy()`.  Fill it in with the following code:
-
-```c#
-[Test()]
-public void WriteOutModelAccuracy()
-{
-	// Note that this is the *training* accuracy.  We are reusing the same data.
-	// There is likely to be overfitting in here, so keep that in mind.
-	var data = bmt.GetRawData(mlContext, "Resources\\2018Bills.csv");
-	var metrics = mlContext.MulticlassClassification.Evaluate(model.Transform(data));
-
-	Console.WriteLine($"Macro Accuracy = {metrics.MacroAccuracy}; Micro Accuracy = {metrics.MicroAccuracy}");
-	Console.WriteLine($"Confusion Matrix with {metrics.ConfusionMatrix.NumberOfClasses} classes.");
-	Console.WriteLine($"{metrics.ConfusionMatrix.GetFormattedConfusionTable()}");
-
-	Assert.AreNotEqual(0, metrics.MacroAccuracy);
-}
-```
-
-5. Run The `WriteOutModelAccuracy()` test for Naive Bayes and record the micro and macro accuracies as well as the confusion matrix.  You will find this if you click the `Output` link on the test results page.
-6. In `DotNetMachineLearning.BillsModelTrainer.BillsModelTrainer.cs`, comment out the lines for Naive Bayes (38-39) and try L-BFGS (a limited-memory quasi-Newton optimization algorithm).  Run the `WriteOutModelAccuracy()` test again and note the results.
-7. Comment out the L-BFGS line and train a Stochastic Dual Coordinate Ascent model.  Run the `WriteOutModelAccuracy()` test again and note the results.
-8. Review the other multi-class classifier algorithms available to you and try them out.
+4. Run each of the tests and ensure that it runs correctly.
+5. Review the `BasicEvaluationTest()` test function.  Add at least one more multi-class classifier not already covered.
 
 ## Phase Three:  Sentiment Analysis
 

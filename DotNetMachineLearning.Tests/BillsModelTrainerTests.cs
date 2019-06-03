@@ -70,6 +70,8 @@ namespace Tests
 			Console.WriteLine($"Macro Accuracy = {metrics.MacroAccuracy}; Micro Accuracy = {metrics.MicroAccuracy}");
 			Console.WriteLine($"Confusion Matrix with {metrics.ConfusionMatrix.NumberOfClasses} classes.");
 			Console.WriteLine($"{metrics.ConfusionMatrix.GetFormattedConfusionTable()}");
+
+			Assert.AreNotEqual(0, metrics.MacroAccuracy);
 		}
 
 		[Test()]
@@ -126,21 +128,6 @@ namespace Tests
 				MinutesPossession = 0,
 				Outcome = "WHO KNOWS?"
 			}).Outcome;
-		}
-
-		[Test()]
-		public void WriteOutModelAccuracy()
-		{
-			// Note that this is the *training* accuracy.  We are reusing the same data.
-			// There is likely to be overfitting in here, so keep that in mind.
-			var data = bmt.GetRawData(mlContext, "Resources\\2018Bills.csv");
-			var metrics = mlContext.MulticlassClassification.Evaluate(model.Transform(data));
-
-			Console.WriteLine($"Macro Accuracy = {metrics.MacroAccuracy}; Micro Accuracy = {metrics.MicroAccuracy}");
-			Console.WriteLine($"Confusion Matrix with {metrics.ConfusionMatrix.NumberOfClasses} classes.");
-			Console.WriteLine($"{metrics.ConfusionMatrix.GetFormattedConfusionTable()}");
-
-			Assert.AreNotEqual(0, metrics.MacroAccuracy);
 		}
 
 		[Test()]
