@@ -69,7 +69,7 @@ static void Main(string[] args)
 	var text = Console.ReadLine();
 
 	// Create sample data to do a single prediction with it 
-	ModelInput sampleData = CreateModelInput(mlContext, text);
+	ModelInput sampleData = new ModelInput { Text = text) };
 
 	// Try a single prediction
 	ModelOutput predictionResult = predEngine.Predict(sampleData);
