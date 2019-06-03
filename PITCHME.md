@@ -437,7 +437,7 @@ var dynamicPipeline =
 		TransformerScope.TrainTest)
     // Use the multi-class SDCA model to predict the label using features.
     .Append(mlContext.MulticlassClassification.Trainers.
-		StochasticDualCoordinateAscent());
+		SdcaNonCalibrated());
 ```
 
 @[1](Create a new pipeline.)
@@ -477,7 +477,7 @@ var dynamicPipeline =
 		TransformerScope.TrainTest)
     // Use the multi-class SDCA model to predict the label using features.
     .Append(mlContext.MulticlassClassification.Trainers.
-		StochasticDualCoordinateAscent());
+		SdcaNonCalibrated());
 ```
 
 @[5-7](Perform feature selection and drop unused features.)
@@ -576,7 +576,7 @@ var dynamicPipeline =
 		TransformerScope.TrainTest)
     // Use the multi-class SDCA model to predict the label using features.
     .Append(mlContext.MulticlassClassification.Trainers.
-		StochasticDualCoordinateAscent());
+		SdcaNonCalibrated());
 ```
 
 @[11-13](Select a multi-class classifier algorithm for training.)
@@ -593,19 +593,18 @@ Overfitting happens when a model latches on to the particulars of a data set, le
 
 ```csharp
 // Split the data 90:10 into train and test sets, train and evaluate.
-var (trainData, testData) = mlContext.MulticlassClassification.
-	TrainTestSplit(data, testFraction: 0.1);
+var split = mlContext.Data.TrainTestSplit(data, testFraction: 0.3);
 // Train the model.
-var model = dynamicPipeline.Fit(trainData);
+var model = dynamicPipeline.Fit(split.TrainSet);
 // Compute quality metrics on the test set.
 var metrics = mlContext.MulticlassClassification.
-	Evaluate(model.Transform(testData));
+	Evaluate(model.Transform(split.TestSet));
 Console.WriteLine(metrics.AccuracyMicro);
 ```
 
-@[1-3](Define a data split for training.  Here it's 90-10.)
-@[4-5](Actually perform the model training.)
-@[6-9](Evaluate measures and write out the accuracy to the console.)
+@[1-2](Define a data split for training.  Here it's 90-10.)
+@[3-4](Actually perform the model training.)
+@[5-8](Evaluate measures and write out the accuracy to the console.)
 
 ---?image=presentation/assets/background/suitmeasure.jpg&size=cover&opacity=20
 

@@ -12,8 +12,8 @@ namespace DotNetMachineLearning.BillsNaiveBayes
 			return mlContext.Data.LoadFromTextFile<RawInput>(path: inputPath, hasHeader: true, separatorChar: ',');
 		}
 
-		public TransformerChain<Microsoft.ML.Transforms.KeyToValueMappingTransformer> TrainModel(
-			MLContext mlContext, IDataView data)
+		public EstimatorChain<Microsoft.ML.Transforms.KeyToValueMappingTransformer> GetPipeline(
+			MLContext mlContext, IEstimator<ITransformer> trainer)
 		{
 			var pipeline =
 				mlContext.Transforms.CustomMapping<QBInputRow, QBOutputRow>(
@@ -35,14 +35,21 @@ namespace DotNetMachineLearning.BillsNaiveBayes
 				// Label is text so it needs to be mapped to a key
 				.Append(mlContext.Transforms.Conversion.MapValueToKey("Label"), TransformerScope.TrainTest)
 				// Naive Bayes is pretty good
-				.Append(mlContext.MulticlassClassification.Trainers.NaiveBayes(
-					labelColumnName: "Label", featureColumnName: "Features"))
+				.Append(trainer)/*mlContext.MulticlassClassification.Trainers.NaiveBayes(
+					labelColumnName: "Label", featureColumnName: "Features"))*/
 				// L-BFGS is awful
 				//.Append(mlContext.MulticlassClassification.Trainers.LbfgsMaximumEntropy(labelColumnName: "Label", featureColumnName: "Features"))
 				// Stochastic DCA is good but SLOW
 				//.Append(mlContext.MulticlassClassification.Trainers.SdcaNonCalibrated(labelColumnName: "Label", featureColumnName: "Features"))
 				.Append(mlContext.Transforms.Conversion.MapKeyToValue("PredictedOutcome", "PredictedLabel"));
 
+			return pipeline;
+		}
+
+		public TransformerChain<Microsoft.ML.Transforms.KeyToValueMappingTransformer> TrainModel(
+			MLContext mlContext, IDataView data, IEstimator<ITransformer> trainer)
+		{
+			var pipeline = GetPipeline(mlContext, trainer);
 			var model = pipeline.Fit(data);
 
 			return model;

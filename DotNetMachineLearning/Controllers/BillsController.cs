@@ -24,7 +24,8 @@ namespace DotNetMachineLearning.Controllers
 			BillsModelTrainer bmt = new BillsModelTrainer();
 
 			var data = bmt.GetRawData(mlContext, "2018Bills.csv");
-			var model = bmt.TrainModel(mlContext, data);
+			var trainer = mlContext.MulticlassClassification.Trainers.NaiveBayes(labelColumnName: "Label", featureColumnName: "Features");
+			var model = bmt.TrainModel(mlContext, data, trainer);
 
 			PredictionEngineBase<RawInput, Prediction> predictor = mlContext.Model.CreatePredictionEngine<RawInput, Prediction>(model);
 			var outcome = predictor.Predict(new RawInput
